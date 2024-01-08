@@ -29,6 +29,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["task_title"])) {
     $mysqli->query($insertTaskQuery);
 }
 
+// Handle task deletion
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["delete_task"])) {
+    $taskId = $_POST["delete_task"];
+    $deleteTaskQuery = "DELETE FROM tasks WHERE id = $taskId";
+    $mysqli->query($deleteTaskQuery);
+}
+
 // Retrieve tasks from the database, ordered by date (most recent first)
 $getTasksQuery = "SELECT * FROM tasks ORDER BY created_at DESC";
 $result = $mysqli->query($getTasksQuery);
@@ -65,7 +72,12 @@ $result = $mysqli->query($getTasksQuery);
         while ($row = $result->fetch_assoc()) {
             echo "<tr>";
             echo "<td>{$row['title']}</td>";
-            echo "<td><button>Undo</button> <button>Delete</button></td>";
+            echo "<td>";
+            echo "<form method='post' action=''>";
+            echo "<input type='hidden' name='delete_task' value='{$row['id']}'>";
+            echo "<button type='submit'>Delete</button>";
+            echo "</form>";
+            echo "</td>";
             echo "</tr>";
         }
         ?>
